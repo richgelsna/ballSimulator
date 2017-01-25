@@ -24,12 +24,8 @@ public class Game extends JPanel
 	public void initializeSim()
 	{
 		ballCollection = new BallCollection(globalBallDiameter, acceptableBallAreaConsumption, getSize());
-		System.out.println("Initialized ballCollection.  Adding ball1");
 		ballCollection.spawnBall(Color.WHITE);
-		System.out.println("Ball Population: " + ballCollection.getBallPopulation() );
-		System.out.println("Initialized ballCollection.  Adding ball2");
 		ballCollection.spawnBall(Color.BLACK);
-		System.out.println("Ball Population: " + ballCollection.getBallPopulation() );
 	}
 	
 	public static void main( String[] args ) throws InterruptedException

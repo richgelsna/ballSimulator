@@ -51,10 +51,6 @@ public class BallCollection
 					ball1.deflect();
 					ball2.deflect();
 					Ball childBall = spawnBallFromParents(ball1, ball2);
-					if(childBall != null)
-					{
-						this.addBall(childBall);
-					}
 				}// End if
 			}// End for
 		}// End for
@@ -94,7 +90,6 @@ public class BallCollection
 		int panelWidth = (int) d.getWidth();
 		int panelHeight = (int) d.getHeight();
 		int maxAttempts = 10;
-		System.out.println("Spawning ball.");
 		for( int i =0; i<maxAttempts; i++)
 		{
 			boolean kosherSpawnSpot = true;
