@@ -16,10 +16,26 @@ public class Game extends JPanel
 {
 	
 	final int globalBallDiameter = 30;
-	double acceptableBallAreaConsumption = 0.1;
+	final double acceptableBallAreaConsumption = 0.12345;
+	final int tickTimeLength = 10;
+	
+	BallCollection ballCollection;
+	
+	public void initializeSim()
+	{
+		ballCollection = new BallCollection(globalBallDiameter, acceptableBallAreaConsumption, getSize());
+		System.out.println("Initialized ballCollection.  Adding ball1");
+		ballCollection.spawnBall(Color.WHITE);
+		System.out.println("Ball Population: " + ballCollection.getBallPopulation() );
+		System.out.println("Initialized ballCollection.  Adding ball2");
+		ballCollection.spawnBall(Color.BLACK);
+		System.out.println("Ball Population: " + ballCollection.getBallPopulation() );
+	}
 	
 	public static void main( String[] args ) throws InterruptedException
 	{
+		
+		
 		JFrame frame = new JFrame( "<(~_~<) |Trippin' Balls| (>'_')>" );
 		Game game = new Game();
 		
@@ -28,16 +44,22 @@ public class Game extends JPanel
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		game.addBall(game.spawnBall(Color.WHITE));
-		game.addBall(game.spawnBall(Color.BLACK));
+		game.initializeSim();
 		while(true)
 		{
-			game.rewriteBackgroundColor(frame);
-			game.moveBalls(game.getSize());
-			game.repaint();
-			Thread.sleep(10);
+			game.tick();
+			
 		}
 		
+	}
+	
+	public void tick() throws InterruptedException
+	{
+		rewriteBackgroundColor();
+		ballCollection.setDimension(getSize());
+		ballCollection.moveBalls();
+		repaint();
+		Thread.sleep(tickTimeLength);
 	}
 	
 	@Override 
@@ -49,7 +71,9 @@ public class Game extends JPanel
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
             RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		detectBallCollision();
+		
+		LinkedList<Ball> ballList = ballCollection.getRenderList();
+		
 		for(int i = 0; i < ballList.size(); i++)
 		{
 			Ball theBall = ballList.get(i);
@@ -62,8 +86,9 @@ public class Game extends JPanel
 		
 	}//End function Paint
 	
-	public void rewriteBackgroundColor(JFrame frame)
+	public void rewriteBackgroundColor()
 	{
+		LinkedList<Ball> ballList = ballCollection.getRenderList();
 		int numberOfBalls = ballList.size();
 		int totalR = 0;
 		int totalG = 0;

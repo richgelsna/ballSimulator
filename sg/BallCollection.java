@@ -1,18 +1,34 @@
 package sg;
 
 import java.util.LinkedList;
+import java.awt.Color;
+import java.awt.Dimension;
 
-LinkedList<Ball> ballList;
 
 public class BallCollection
 {
-	
+	LinkedList<Ball> ballList;
 	int uniformBallDiameter;
 	double acceptableBallAreaConsumption;
+	Dimension d;
 	
-	public BallCollection()
+	
+	public BallCollection(int uniformBallDiameter, double acceptableBallAreaConsumption, Dimension d)
 	{
 		ballList = new LinkedList<Ball>();
+		this.uniformBallDiameter = uniformBallDiameter;
+		this.acceptableBallAreaConsumption = acceptableBallAreaConsumption;
+		this.d = d;
+	}
+	
+	public void setDimension(Dimension d)
+	{
+		this.d = d;
+	}
+	
+	public Dimension getDimension()
+	{
+		return d;
 	}
 	
 	public int getBallPopulation()
@@ -22,8 +38,7 @@ public class BallCollection
 	
 	public void detectBallCollision()
 	{
-		
-		
+			
 		for(int i = 0; i< ballList.size(); i++)
 		{
 			for(int n = (i + 1); n < ballList.size(); n++)
@@ -46,13 +61,15 @@ public class BallCollection
 		
 	}// End method detectBallCollision
 	
-	public void moveBalls(Dimension d)
+	public void moveBalls()
 	{
 		for(int i = 0; i < ballList.size(); i++)
 		{
 			ballList.get(i).moveBall(d);
 			
 		}
+		
+		detectBallCollision();
 	}// End moveBalls
 	
 	private void addBall(Ball ball)
@@ -60,37 +77,33 @@ public class BallCollection
 		ballList.add(ball);
 	}
 	
-	private LinkedList<Ball> getRenderList()
+	public LinkedList<Ball> getRenderList()
 	{
-		LinkedList<Ball> deepCopy = new LinkedList<Ball>;
+		LinkedList<Ball> deepCopy = new LinkedList<Ball>();
 		for(int i = 0; i < ballList.size(); i++ )
 		{
 			deepCopy.add( new Ball(ballList.get(i)) );
 		}
-		
 		return deepCopy;
 	}
 	
 	
 	public Ball spawnBall(Color color)
 	{
-		Dimension d = getSize();
 		boolean successfulReproduction = false;
 		int panelWidth = (int) d.getWidth();
 		int panelHeight = (int) d.getHeight();
 		int maxAttempts = 10;
-		System.out.println( "Attempting to spawn a new ball.");
-		
+		System.out.println("Spawning ball.");
 		for( int i =0; i<maxAttempts; i++)
 		{
 			boolean kosherSpawnSpot = true;
-			System.out.println("Attempt #" + i + ": ");
 			
-			// Subracting the globalBallDiameter constant, so that the ball doesn't try to partially spawn off screen.
-			int initialX = BallUtils.randomlySelectIntermediateValue(1, panelWidth-globalBallDiameter);
-			int initialY = BallUtils.randomlySelectIntermediateValue(1, panelWidth-globalBallDiameter);
+			// Subracting the uniformBallDiameter constant, so that the ball doesn't try to partially spawn off screen.
+			int initialX = BallUtils.randomlySelectIntermediateValue(1, panelWidth-uniformBallDiameter);
+			int initialY = BallUtils.randomlySelectIntermediateValue(1, panelWidth-uniformBallDiameter);
 		
-			Ball newBall = new Ball(initialX, initialY, globalBallDiameter);
+			Ball newBall = new Ball(initialX, initialY, uniformBallDiameter);
 			
 			
 			
@@ -104,15 +117,14 @@ public class BallCollection
 			}//End while loop
 			
 			if( kosherSpawnSpot )
-			{
-				System.out.println("Spawning ball at coordinates (" + initialX + ", " + initialY + ").");
-				
+			{				
 				newBall.setColor(color);
+				addBall(newBall);
 				return newBall;
 			}// End if
 			else
 			{
-				System.out.println( "Not a good spawn spot for this attempt.\n");
+				//System.out.println( "Not a good spawn spot for this attempt.\n");
 			}// End else
 			
 		}//End outer for loop
@@ -133,10 +145,12 @@ public class BallCollection
 			int g = BallUtils.randomlySelectIntermediateValue(parent1Color.getGreen(), parent2Color.getGreen());
 			int b = BallUtils.randomlySelectIntermediateValue(parent1Color.getBlue(), parent2Color.getBlue());
 			
+			/*
 			System.out.println( "Creating child ball.");
 			System.out.println( "Parent1 red: " + parent1Color.getRed() + "\tParent2 red: " + parent2Color.getRed() + "\tChild red: " + r );
 			System.out.println( "Parent1 green: " + parent1Color.getGreen() + "\tParent2 green: " + parent2Color.getGreen() + "\tChild green: " + g );
 			System.out.println( "Parent1 blue: " + parent1Color.getBlue() + "\tParent2 blue: " + parent2Color.getBlue() + "\tChild blue: " + b );
+			*/
 			
 			childColor = new Color(r, g, b);
 			
@@ -150,12 +164,11 @@ public class BallCollection
 	
 	public boolean isStableSpawn()
 	{
-		Dimension d = getSize();
 		int panelWidth = (int) d.getWidth();
 		int panelHeight = (int) d.getHeight();
 		
 		double totalPanelArea = panelWidth * panelHeight;
-		double ballComfortSpace = globalBallDiameter*globalBallDiameter;
+		double ballComfortSpace = uniformBallDiameter*uniformBallDiameter;
 		double totalBallAreaConsumption = ballList.size() * ballComfortSpace;
 		
 		

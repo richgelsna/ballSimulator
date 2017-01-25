@@ -25,15 +25,10 @@ public class BallUtils
 			smallerValue = value1;
 		}
 		
-		System.out.println( "largerValue: " + largerValue);
-		System.out.println( "smallerValue: " + smallerValue);
-		
 		
 		// Adding 1.  In rng, the upper limit is excluded, but we want the random number to be either the lower or higher of values.
 		difference = largerValue-smallerValue+1;
 		randValue = rng.nextInt(difference);
-		
-		System.out.println( "difference: " + difference + "\trandValue: " + randValue);
 		
 		int finalDestination = rng.nextInt(2);
 		
